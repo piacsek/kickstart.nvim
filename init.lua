@@ -159,6 +159,8 @@ vim.opt.scrolloff = 10
 -- Felipe's remaps!
 
 vim.keymap.set('n', '<leader>x', ':q<CR>')
+vim.keymap.set('n', '<leader>X', ':q!<CR>')
+vim.keymap.set('n', '<leader><BS>', ':w<CR>')
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
