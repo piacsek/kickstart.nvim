@@ -158,18 +158,22 @@ vim.opt.scrolloff = 10
 --  See `:help vim.keymap.set()`
 -- <Felipe's remaps!>
 
-vim.keymap.set('n', '<leader><Esc>', ':hide<CR>')
+vim.keymap.set('n', '<leader><Esc>', ':hide<CR>', { desc = 'Hide window' })
 vim.keymap.set('n', '<leader>X', ':q<CR>')
+vim.keymap.set({ 'n', 'v' }, '<Tab>', '<C-w>w', { desc = 'Move to the next window' })
 
 -- Revisit this: there maybe a better way to run tests
 vim.keymap.set('n', '<leader>t', vim.lsp.codelens.run)
-vim.keymap.set('n', '<leader><BS>', ':w<CR>')
+vim.keymap.set('n', '<leader><BS>', ':w<CR>', { desc = 'Save file' })
 
 -- Disabling arrows
-vim.keymap.set('n', '<Up>', '<Nop>')
-vim.keymap.set('n', '<Left>', '<Nop>')
-vim.keymap.set('n', '<Down>', '<Nop>')
-vim.keymap.set('n', '<Right>', '<Nop>')
+vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Up>', '<Nop>')
+vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Left>', '<Nop>')
+vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Down>', '<Nop>')
+vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Right>', '<Nop>')
+
+-- Replacing selected words in visual mode
+vim.keymap.set('v', '<leader>s', '"sy:%s/<C-r>s/', { desc = '[S]ubstitute selected word' })
 
 -- </Felipe's remaps!>
 
@@ -425,6 +429,25 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[F]find [R]esume' })
       vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = '[F]find Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      -- Searching selected words in visual mode
+      function vim.getVisualSelection()
+        vim.cmd 'noau normal! "vy"'
+        local text = vim.fn.getreg 'v'
+        vim.fn.setreg('v', {})
+
+        text = string.gsub(text, '\n', '')
+        if #text > 0 then
+          return text
+        else
+          return ''
+        end
+      end
+
+      vim.keymap.set('v', '<leader>fw', function()
+        local text = vim.getVisualSelection()
+        builtin.live_grep { default_text = text }
+      end, { noremap = true, silent = true, desc = '[F]ind selected [W]ords' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
