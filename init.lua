@@ -156,15 +156,22 @@ vim.opt.scrolloff = 10
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
--- Felipe's remaps!
+-- <Felipe's remaps!>
 
-vim.keymap.set('n', '<leader>x', ':q<CR>')
-vim.keymap.set('n', '<leader>X', ':q!<CR>')
+vim.keymap.set('n', '<leader><Esc>', ':hide<CR>')
+vim.keymap.set('n', '<leader>X', ':q<CR>')
+
+-- Revisit this: there maybe a better way to run tests
+vim.keymap.set('n', '<leader>t', vim.lsp.codelens.run)
 vim.keymap.set('n', '<leader><BS>', ':w<CR>')
+
+-- Disabling arrows
 vim.keymap.set('n', '<Up>', '<Nop>')
 vim.keymap.set('n', '<Left>', '<Nop>')
 vim.keymap.set('n', '<Down>', '<Nop>')
 vim.keymap.set('n', '<Right>', '<Nop>')
+
+-- </Felipe's remaps!>
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
@@ -248,6 +255,31 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+
+  {
+    'elixir-tools/elixir-tools.nvim',
+    version = '*',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function()
+      local elixir = require 'elixir'
+      local elixirls = require 'elixir.elixirls'
+
+      elixir.setup {
+        nextls = { enable = true },
+        credo = {},
+        elixirls = {
+          enable = true,
+          settings = elixirls.settings {
+            dialyzerEnabled = false,
+            enableTestLenses = true,
+          },
+        },
+      }
+    end,
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+  },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -386,6 +418,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]find [F]iles' })
       vim.keymap.set('n', '<leader>fs', builtin.builtin, { desc = '[F]find [S]elect Telescope' })
       vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = '[F]find current [W]ord' })
+      -- vim.keymap.set('v', '<leader>fs', '"sy:Telescope grep_string search=<C-r>s<CR>', { desc = '[F]find current [S]election' })
+      -- vim.keymap.set('v', '<leader>fs', '[[<Esc><Cmd>builtin.grep_string({ search = vim.fn.getreg('v') })<CR>]]', { desc = '[F]find current [S]election' })
       vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '[F]find by [G]rep' })
       vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = '[F]find [D]iagnostics' })
       vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[F]find [R]esume' })
