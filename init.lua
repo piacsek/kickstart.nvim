@@ -446,7 +446,7 @@ require('lazy').setup({
 
       vim.keymap.set('v', '<leader>fw', function()
         local text = vim.getVisualSelection()
-        builtin.live_grep { default_text = text }
+        builtin.grep_string { default_text = text }
       end, { noremap = true, silent = true, desc = '[F]ind selected [W]ords' })
 
       -- Slightly advanced example of overriding default behavior and theme
