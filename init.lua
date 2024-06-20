@@ -166,12 +166,6 @@ vim.keymap.set({ 'n', 'v' }, '<Tab>', '<C-w>w', { desc = 'Move to the next windo
 vim.keymap.set('n', '<leader>t', vim.lsp.codelens.run)
 vim.keymap.set('n', '<leader><BS>', ':w<CR>', { desc = 'Save file' })
 
--- Disabling arrows
-vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Up>', '<Nop>')
-vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Left>', '<Nop>')
-vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Down>', '<Nop>')
-vim.keymap.set({ 'n', 'v', 'i', 'x', 'c' }, '<Right>', '<Nop>')
-
 -- Replacing selected words in visual mode
 vim.keymap.set('v', '<leader>s', '"sy:%s/<C-r>s/', { desc = '[S]ubstitute selected word' })
 
@@ -663,6 +657,7 @@ require('lazy').setup({
         -- tsserver = {},
         --
 
+        nextls = { enable = true },
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
