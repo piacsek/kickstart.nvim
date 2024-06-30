@@ -915,7 +915,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'elixir', 'heex', 'eex' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -942,6 +942,17 @@ require('lazy').setup({
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
+  },
+
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'jfpedroza/neotest-elixir',
+    },
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
@@ -987,6 +998,28 @@ require('lazy').setup({
     },
   },
 })
+local function find_app_root(test_file)
+  -- Find the directory that contains the "apps" directory
+  local project_root = vim.fn.getcwd()
+  local test_file_path = vim.fn.fnamemodify(test_file, ':p')
+  local apps_index = test_file_path:find '/apps/'
+  if apps_index then
+    local app_dir = test_file_path:sub(1, apps_index + 4)
+    return app_dir .. test_file_path:match '/apps/([^/]+)/'
+  end
+  return project_root
+end
+
+require('neotest').setup {
+  adapters = {
+    require 'neotest-elixir' {
+      cwd = function()
+        local test_file = vim.fn.expand '%:p'
+        return find_app_root(test_file)
+      end,
+    },
+  },
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
